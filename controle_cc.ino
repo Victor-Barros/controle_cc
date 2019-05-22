@@ -1,39 +1,37 @@
+#include <MsTimer2.h>
 const int canal_a=2, canal_b=3;
 int i=0;
-unsigned long tempo=0, ultimo_tempo=0;
-volatile double angulo=0; 
-double ultimo_angulo=0, velocidade[3]={0,0,0};
-
+volatile long pulsos;
+volatile double x1[2]={0,0},x2[2]={0,0},ts=0.002,wc=50,u=0;
 void setup() {
   pinMode(canal_a, INPUT);
   pinMode(canal_b, INPUT);
-
   Serial.begin(115200);
-
+  MsTimer2::set(2, svf); //2ms
+  MsTimer2::start();
   attachInterrupt(digitalPinToInterrupt(canal_a), conta_pulsos_a, RISING);
 }
 
 void loop() {
-  tempo=millis();
-  
-  if (tempo - ultimo_tempo >= 100) {
-    velocidade[i++] = 9.5493*(angulo-ultimo_angulo)/((tempo-ultimo_tempo));
-    Serial.println((velocidade[0]+velocidade[1]+velocidade[2])/3);
-    ultimo_angulo=angulo;
-    ultimo_tempo=tempo;
+  if(millis()%100==0) {
+    Serial.println((x1[1]*60)/(2*3.14159));
   }
+}
+
+void svf() {
+  noInterrupts();
+  u=0.19635*pulsos;
+  x1[0]=x1[1];
+  x2[0]=x2[1];
   
-  if (i >=3) i=0;
+  x1[1]=x2[0]*ts+x1[0];
+  x2[1]=x2[0]*(1-2*wc*ts)-x1[0]*wc*wc*ts+u*wc*wc*ts;
+  interrupts();
 }
 
 void conta_pulsos_a() {
   noInterrupts();
-  if (digitalRead(canal_b) == 0) {
-    angulo+=196.35; //krad
-    //pulsos++;
-  } else {
-    angulo-=196.35;
-    //pulsos--;
-  }
+  if (digitalRead(canal_b) == 0) pulsos++;
+  else pulsos--; 
   interrupts();
 }
