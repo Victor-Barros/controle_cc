@@ -14,16 +14,20 @@ void setup() {
 
 void loop() {
   if(millis()%100==0) {
-    Serial.println((x1[1]*60)/(2*3.14159));
+    Serial.println((x2[1]*60)/(2*3.14159));
+    //Serial.println();
   }
 }
 
 void svf() {
   noInterrupts();
-  u=0.19635*pulsos;
   x1[0]=x1[1];
   x2[0]=x2[1];
-  
+  if (u >= 2*PI) {
+    pulsos-=32;
+    x1[0]-= 2*PI;
+  }
+  u=(PI/16)*pulsos;
   x1[1]=x2[0]*ts+x1[0];
   x2[1]=x2[0]*(1-2*wc*ts)-x1[0]*wc*wc*ts+u*wc*wc*ts;
   interrupts();
