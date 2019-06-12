@@ -1,8 +1,12 @@
 #include <MsTimer2.h>
+
 const int canal_a=2, canal_b=3;
 int i=0;
 volatile long pulsos;
 volatile double x1[2]={0,0},x2[2]={0,0},ts=0.002,wc=50,u=0;
+int serial_mode=0; //0-serial print 1-serial data
+String str;
+
 void setup() {
   pinMode(canal_a, INPUT);
   pinMode(canal_b, INPUT);
@@ -13,10 +17,20 @@ void setup() {
 }
 
 void loop() {
-  if(millis()%100==0) {
-    Serial.println((x2[1]*60)/(2*3.14159));
-    //Serial.println();
+
+  if(Serial.available() > 0) {
+    str=Serial.readString();
+    if (str == "c") serial_mode=1;
+    else serial_mode=0;
   }
+  
+  if(millis()%100==0 && serial_mode == 0) {
+    Serial.println((x2[1]*60)/(2*PI));
+  }
+}
+
+void capturar() {
+  
 }
 
 void svf() {
@@ -30,6 +44,7 @@ void svf() {
   u=(PI/16)*pulsos;
   x1[1]=x2[0]*ts+x1[0];
   x2[1]=x2[0]*(1-2*wc*ts)-x1[0]*wc*wc*ts+u*wc*wc*ts;
+  if (serial_mode == 1) Serial.println(x2[1]);
   interrupts();
 }
 
