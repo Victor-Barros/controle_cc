@@ -47,13 +47,14 @@ void svf() {
   x1[1]=x2[0]*ts+x1[0];
   x2[1]=x2[0]*(1-2*wc*ts)-x1[0]*wc*wc*ts+u*wc*wc*ts;
   if (serial_mode == 1) {
-    soma+=x2[1];
+    Serial.println(x2[1]);
+    /*soma+=x2[1];
     cont_soma++;
     if(cont_soma >= 5) {
       Serial.println(soma/5);
       soma=0;
       cont_soma=0;
-    }
+    }*/
   }
   interrupts();
 }
