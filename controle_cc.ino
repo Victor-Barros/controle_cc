@@ -1,6 +1,6 @@
 #include <MsTimer2.h>
 
-const int canal_a=2, canal_b=3;
+const int canal_a=2, canal_b=3, pwm1=6;
 int i=0;
 volatile long pulsos;
 volatile double x1[2]={0,0},x2[2]={0,0},ts=0.002,wc=50,u=0,soma=0;
@@ -47,14 +47,14 @@ void svf() {
   x1[1]=x2[0]*ts+x1[0];
   x2[1]=x2[0]*(1-2*wc*ts)-x1[0]*wc*wc*ts+u*wc*wc*ts;
   if (serial_mode == 1) {
-    Serial.println(x2[1]);
-    /*soma+=x2[1];
+    //Serial.println(x2[1]);
+    soma+=x2[1];
     cont_soma++;
     if(cont_soma >= 5) {
-      Serial.println(soma/5);
+      //Serial.println(soma/5);
       soma=0;
       cont_soma=0;
-    }*/
+    }
   }
   interrupts();
 }
