@@ -3,7 +3,7 @@
 const int canal_a=2, canal_b=3, pwm1=6;
 int i=0;
 volatile long pulsos;
-volatile double x1[2]={0,0},x2[2]={0,0},ts=0.002,wc=50,u=0,soma=0;
+volatile double x1[2]={0,0},x2[2]={0,0},ts=0.002,wc=80,u=0,soma=0;
 volatile int cont_soma=0;
 int serial_mode=0; //0-serial print; 1-serial data
 String str;
@@ -26,8 +26,9 @@ void loop() {
     else serial_mode=0;
   }
   
-  if(millis()%100==0 && serial_mode == 2) {
-    Serial.println((x2[1]*60)/(2*PI));
+  if(millis()%10==0 && serial_mode == 2) {
+    //Serial.println((x2[1]*60)/(2*PI));
+    Serial.println(x2[1]);
   }
 }
 
@@ -46,16 +47,6 @@ void svf() {
   u=(PI/16)*pulsos;
   x1[1]=x2[0]*ts+x1[0];
   x2[1]=x2[0]*(1-2*wc*ts)-x1[0]*wc*wc*ts+u*wc*wc*ts;
-  if (serial_mode == 1) {
-    //Serial.println(x2[1]);
-    soma+=x2[1];
-    cont_soma++;
-    if(cont_soma >= 5) {
-      //Serial.println(soma/5);
-      soma=0;
-      cont_soma=0;
-    }
-  }
   interrupts();
 }
 
